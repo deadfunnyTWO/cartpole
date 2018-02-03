@@ -105,6 +105,7 @@ def run_episode(env, policy_grad, value_grad, sess):
 env = gym.make('CartPole-v0')
 #env.monitor.start('cartpole-hill/', force=True)
 env = gym.wrappers.Monitor(env, )
+#after the  gym.wrappaers.Monitor(env, ) line 107, I need an repository, how do I put my repository.
 policy_grad = policy_gradient()
 value_grad = value_gradient()
 sess = tf.InteractiveSession()
