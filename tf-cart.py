@@ -1,10 +1,14 @@
 import tensorflow as tf
 import numpy as np
-import os, sys
 import random
 import gym
 import math
-import matplotlib.pyplot as plt
+#optional libaries
+#import matplotlib.pyplot as plt
+#from keras.optimizers import Adam
+#from collections import deque
+#from keras.models import Sequential
+#from keras.layers import Dense
 
 
 def softmax(x):
@@ -21,7 +25,7 @@ def policy_gradient():
         advantages = tf.placeholder("float",[None,1])
         linear = tf.matmul(state,params)
         probabilities = tf.nn.softmax(linear)
-        good_probabilities = tf.reduce_sum(tf.mul(probabilities, actions),reduction_indices=[1])
+        good_probabilities = tf.reduce_sum(tf.multiply(probabilities, actions),reduction_indices=[1])
         eligibility = tf.log(good_probabilities) * advantages
         loss = -tf.reduce_sum(eligibility)
         optimizer = tf.train.AdamOptimizer(0.01).minimize(loss)
@@ -103,9 +107,12 @@ def run_episode(env, policy_grad, value_grad, sess):
 
 
 env = gym.make('CartPole-v0')
+env.render()
 #env.monitor.start('cartpole-hill/', force=True)
-env = gym.wrappers.Monitor(env, )
-#after the  gym.wrappaers.Monitor(env, ) line 107, I need an repository, how do I put my repository.
+#fileWithInfo = io.open("cart-data", "w+")
+# 'cartpole-hill' is the file that the data will be transfer, if you want to change file do it.
+env = gym.wrappers.Monitor(env, 'cartpole-hill', force=True) 
+#file_writer = tf.summary.FileWriter('cartpole-graph', sess.graph)
 policy_grad = policy_gradient()
 value_grad = value_gradient()
 sess = tf.InteractiveSession()
@@ -113,8 +120,8 @@ sess.run(tf.initialize_all_variables())
 for i in range(2000):
     reward = run_episode(env, policy_grad, value_grad, sess)
     if reward == 200:
-        print("Reward achieved after {} timesteps".format(i+1))
-        print(i)
+        print("reward 200")
+        print("Reward achieved after {} epsisodes".format(i+1))
         break
 t = 0
 for _ in range(1000):
@@ -122,4 +129,3 @@ for _ in range(1000):
     t += reward
 print(t / 1000)
 env.monitor.close()
-
